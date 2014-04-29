@@ -1,4 +1,6 @@
 from collections import OrderedDict
+import cass
+import hive
 import sys
 import os
 import os.path
@@ -11,13 +13,13 @@ class CLI(object):
         self.pop = population.Population()
         self.data_dir = '/tmp/'
         self.cassandra = cass.Cassandra()
+        self.hive = hive.Hive()
         
     def print_help(self):
         s = "usage: python cli.py CMD ARG\n"
         s += "commands:\n"
-        s += "    set DATA_DIR\n"
-        s += "    download (pop|econ)\n"
-        s += "    load (pop|econ)\n"
+        s += "    download (pop|econ) STATE\n"
+        s += "    upload (cassandra|hive) STATE\n"
         print s
 
     def _pretty_row(self, column_names, row_data, replace = {}):
@@ -30,11 +32,11 @@ class CLI(object):
 
             if k == 'state':
                 state_name = self.geo.codes[k][data]
-                row[column_names.index(k)] = state_name
+                row[column_names.index(k)] = "\'" + state_name + "\'"
                 row[column_names.index('state_cd')] = data
             elif k == 'county':
                 county_name = self.geo.codes[k][state_name][data]
-                row[column_names.index(k)] = county_name
+                row[column_names.index(k)] = "\'" + county_name + "\'"
                 row[column_names.index('county_cd')] = data
             else:
                 row[column_names.index(k)] = data
@@ -115,7 +117,15 @@ class CLI(object):
             self.cassandra._create_tables(session)
             self.cassandra._upload_economic(session, os.path.join(self.data_dir, "%s_econ.psv" % state))
             self.cassandra._upload_population(session, os.path.join(self.data_dir, "%s_pop.psv" % state))
-            self.cassandra._close()
+            self.cassandra._close(session)
+
+    def _upload_hive(self, state):
+        session = self.hive._connect()
+        if session:
+            self.hive._create_tables(session)
+            self.hive._upload_economic(session, os.path.join(self.data_dir, "%s_econ.psv" % state))
+            self.hive._upload_population(session, os.path.join(self.data_dir, "%s_pop.psv" % state))
+            self.hive._close(session)
 
     def dispatch(self, cmd, args):
         if cmd == "set":
@@ -123,13 +133,22 @@ class CLI(object):
         elif cmd == "download":
             if args[0] == "geo":
                 self._download_geo()
-            elif args[0] == "pop":
-                self._download_pop(args[1])
-            elif args[0] == "econ":
-                self._download_econ(args[1])
+
+            if len(args) > 1:
+                if args[0] == "pop":
+                    self._download_pop(args[1])
+                elif args[0] == "econ":
+                    self._download_econ(args[1])
+            else:
+                print "Please supply name of state"
         elif cmd == "upload":
-            if args[0] == "cassandra":
-                self._upload_cassandra(args[1])
+            if len(args) > 1:
+                if args[0] == "cassandra":
+                    self._upload_cassandra(args[1])
+                elif args[0] == "hive":
+                    self._upload_hive(args[1])
+            else:
+                print "Please supply name of state"
 
 def main(argv=None):
     cli = CLI()

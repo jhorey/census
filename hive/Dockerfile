@@ -6,9 +6,9 @@ RUN mkdir -p /home/ferry/census
 
 # Install everything
 WORKDIR /home/ferry/census
-RUN apt-get --yes install python-pip git
-RUN git clone https://github.com/opencore/census
-RUN pip install -r src/requirements.txt
+RUN apt-get --yes install python-pip git python-dev
+ADD ./src /home/ferry/census
+RUN pip install -r requirements.txt
 
 # Clean everything
 RUN apt-get clean

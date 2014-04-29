@@ -65,7 +65,7 @@ class Geography(object):
                         f.close()
                 except ConnectionError as e:
                     print e.explanation
-            self._load_county_codes(output_file)
+        self._load_county_codes(output_file)
 
     def download_zip(self, output_file):
         year = 2010
@@ -87,7 +87,7 @@ class Geography(object):
                         f.close()
                 except ConnectionError as e:
                     print e.explanation
-            self._load_zip_codes(output_file)
+        self._load_zip_codes(output_file)
 
     def _load_state_codes(self, input_file):
         f = open(input_file, "r")

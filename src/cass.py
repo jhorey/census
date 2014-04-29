@@ -1,4 +1,5 @@
 import csv
+import logging
 import os
 import sys
 from cassandra import AlreadyExists
@@ -39,13 +40,13 @@ class Cassandra(object):
         try:
             query = """
                     CREATE TABLE economic (
-                    state_cd TEXT,
-                    state_name TEXT,
-                    county_cd TEXT,
-                    county_name TEXT,
                     median INT,
                     mean INT,
                     capita INT,
+                    state_name TEXT,
+                    state_cd TEXT,
+                    county_name TEXT, 
+                    county_cd TEXT,
                     PRIMARY KEY(state_name, county_name)
                 )
                 """
@@ -56,17 +57,17 @@ class Cassandra(object):
         try:
             query = """
                     CREATE TABLE population (
-                    state_cd TEXT,
-                    state_name TEXT,
-                    county_cd TEXT,
-                    county_name TEXT,
                     total INT, 
                     white INT, 
                     black INT, 
                     native INT, 
                     asian INT, 
                     pacific INT, 
-                    latino INT
+                    latino INT,
+                    state_name TEXT,
+                    state_cd TEXT,
+                    county_name TEXT,
+                    county_cd TEXT,
                     PRIMARY KEY(state_name, county_name)
                     )
                     """
@@ -74,7 +75,7 @@ class Cassandra(object):
         except AlreadyExists:
             pass
 
-    def _upload_economic(session, data_file):
+    def _upload_economic(self, session, data_file):
         session.set_keyspace("census")
         f = open(data_file, 'r')
         reader = csv.reader(f, delimiter='|')
@@ -96,7 +97,7 @@ class Cassandra(object):
                        'capita' : int(capita) }
             session.execute(query, values)
 
-    def _upload_population(session, data_file):
+    def _upload_population(self, session, data_file):
         session.set_keyspace("census")
         f = open(data_file, 'r')
         reader = csv.reader(f, delimiter='|')
@@ -107,7 +108,7 @@ class Cassandra(object):
                     (state_cd, state_name, county_cd, county_name, total, white, black, native, asian, pacific, latino)
                     VALUES (%(state_cd)s, %(state_name)s, 
                             %(county_cd)s, %(county_name)s,
-                            %(total)s, %(white)s, %(black)s),
+                            %(total)s, %(white)s, %(black)s,
                             %(native)s, %(asian)s, %(pacific)s, %(latino)s) 
                    """
             values = { 'state_cd' : str(state_cd),
