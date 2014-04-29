@@ -1,5 +1,5 @@
-FROM ferry/hadoop-client
-NAME ferry/census-hadoop
+FROM ferry/cassandra-client
+NAME ferry/census-cassandra
 
 # Everything goes in home dir.
 RUN mkdir -p /home/ferry/census
@@ -7,8 +7,10 @@ RUN mkdir -p /home/ferry/census
 # Install everything
 WORKDIR /home/ferry/census
 RUN apt-get --yes install python-pip git python-dev
-ADD ./src /home/ferry/census
-RUN pip install -r requirements.txt
+RUN git clone https://github.com/jhorey/census
+RUN python setup.py install
+# ADD ./src /home/ferry/census
+# RUN pip install -r requirements.txt
 
 # Clean everything
 RUN apt-get clean

@@ -1,0 +1,9 @@
+include LICENSE
+include *.md
+include census/cassandra/*
+include census/hive/*
+include census/requirements.txt
+include census/scripts/*
+global-exclude *.pyc
+global-exclude *.pyo
+global-exclude *~

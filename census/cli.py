@@ -1,22 +1,23 @@
 from collections import OrderedDict
-import cass
-import hive
+from census.cass import Cassandra
+from census.hive import Hive
+from census.geography import Geography
+from census.population import Population
 import sys
 import os
 import os.path
-import geography
-import population
+
 
 class CLI(object):
     def __init__(self):
-        self.geo = geography.Geography()
-        self.pop = population.Population()
+        self.geo =Geography()
+        self.pop =Population()
         self.data_dir = '/tmp/'
-        self.cassandra = cass.Cassandra()
-        self.hive = hive.Hive()
+        self.cassandra = Cassandra()
+        self.hive = Hive()
         
     def print_help(self):
-        s = "usage: python cli.py CMD ARG\n"
+        s = "usage: census CMD ARG\n"
         s += "commands:\n"
         s += "    download (pop|econ) STATE\n"
         s += "    upload (cassandra|hive) STATE\n"
@@ -150,14 +151,12 @@ class CLI(object):
             else:
                 print "Please supply name of state"
 
-def main(argv=None):
+def main():
     cli = CLI()
-    if len(argv) < 2:
+    if not sys.argv or len(sys.argv) < 2:
         cli.print_help()
     else:
-        argv.pop(0)
-        cmd = argv.pop(0)
-        cli.dispatch(cmd, argv)
+        sys.argv.pop(0)
+        cmd = sys.argv.pop(0)
+        cli.dispatch(cmd, sys.argv)
 
-if __name__ == "__main__":
-    main(sys.argv)

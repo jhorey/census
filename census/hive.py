@@ -1,9 +1,12 @@
 import csv
 import logging
 import os
+import os.path
 from string import Template
 import sys
 from subprocess import Popen, PIPE
+
+PHOME = os.path.dirname(__file__)
 
 class Hive(object):
     def _connect(self):
@@ -21,10 +24,10 @@ class Hive(object):
         logging.warning(output.strip())
 
     def _create_tables(self, session):
-        self._execute_file('scripts/createtable.hql')
+        self._execute_file(os.path.join(PHOME, 'scripts/createtable.hql'))
 
     def _upload_economic(self, session, data_file):
-        in_file = open('scripts/upload.hql', 'r')
+        in_file = open(os.path.join(PHOME, 'scripts/upload.hql'), 'r')
         out_file = open('/tmp/upload.hql', 'w')
 
         changes = { "FILE":data_file,
@@ -39,7 +42,7 @@ class Hive(object):
         self._execute_file('/tmp/upload.hql')
 
     def _upload_population(self, session, data_file):
-        in_file = open('scripts/upload.hql', 'r')
+        in_file = open(os.path.join(PHOME, 'scripts/upload.hql'), 'r')
         out_file = open('/tmp/upload.hql', 'w')
 
         changes = { "DIR":"/tmp", 

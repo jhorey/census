@@ -1,6 +1,5 @@
 from collections import OrderedDict
-import geography
-import get
+from census.get import Get
 import json
 import os
 import requests
@@ -9,7 +8,7 @@ from requests.exceptions import ConnectionError
 
 class Population(object):
     def __init__(self):
-        self.get = get.Get()
+        self.get = Get()
         self.geo = None
         self.output_file = None
 

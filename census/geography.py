@@ -1,4 +1,4 @@
-import get
+from census.get import Get
 import json
 import os
 import sys
@@ -7,7 +7,7 @@ from requests.exceptions import ConnectionError
 
 class Geography(object):
     def __init__(self):
-        self.get = get.Get()
+        self.get = Get()
         self.area = {
             'state' : 'state',
             'county' : 'county', 
