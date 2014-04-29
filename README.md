@@ -57,7 +57,9 @@ First you'll need an API key from the U.S. Census. You can request one [here](ht
 $ ferry ssh sa-xxyyzz
 ```
 
-Now place the key in `~/.censuskey`. Now you can start downloading some data. Here are a sequence of commands to download data and store the data in Hadoop. a
+The `sa-xxyyzz` is the unique ID of your Hadoop (or Cassandra) cluster. You should have seen that output from the `./make.sh` command. 
+
+After logging into your connector, place the API key in `~/.censuskey`. Now you can start downloading some data. Here are a sequence of commands to download data and store the data in Hadoop. a
 
 ```
 $ census download pop Tennessee
