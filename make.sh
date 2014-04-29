@@ -15,12 +15,10 @@ fi
 
 if [[ $1 == "cassandra" ]]; then
     print "Creating Cassandra image"
-    cp cassandra/Dockerfile Dockerfile
-    ferry start cassandra/census.yml -b ./
-    rm Dockerfile
+    cd census/cassandra/
+    ferry start census.yml -b ./
 elif [[ $1 == "hive" ]]; then
     print "Creating Hive image"
-    cp hive/Dockerfile Dockerfile
-    ferry start hive/census.yml -b ./
-    rm Dockerfile
+    cd census/hive/
+    ferry start census.yml -b ./
 fi
