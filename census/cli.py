@@ -33,7 +33,7 @@ class CLI(object):
 
             if k == 'state':
                 state_name = self.geo.codes[k][data]
-                row[column_names.index(k)] = "\'" + state_name + "\'"
+                row[column_names.index(k)] = state_name
                 row[column_names.index('state_cd')] = data
             elif k == 'county':
                 county_name = self.geo.codes[k][state_name][data]
